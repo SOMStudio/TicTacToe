@@ -273,7 +273,8 @@ public class PlayFieldManager_TicTacToe : BaseMenuController {
 		string stInfo = "[t]Information Game";
 
 		stInfo = stInfo + gameController.GetPlayerInfo ();
-		stInfo = stInfo + gameController.GetCompleteLevelCountInfo ();
+		stInfo = stInfo + gameController.GetPlayedLevelCountInfo ();
+		stInfo = stInfo + gameController.GetWinLevelCountInfo ();
 
 		// picture
 		string resPict = "";

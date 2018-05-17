@@ -115,7 +115,9 @@ public class GameController_TicTacToe : BaseGameController {
 		LoadDataPlayer ();
 
 		//main menu
-		GameMenu.ShowWindowStartGame ();
+		if (GameMenu) {
+			GameMenu.ShowWindowStartGame ();
+		}
 
 		//update system time in game
 		InvokeRepeating ("UpdateSystemTime", 5, 20);
@@ -139,9 +141,12 @@ public class GameController_TicTacToe : BaseGameController {
 			//add score in data
 			PlayerManager.AddScore (scoreLevel);
 
+			//add count complete level
+			AddCountPlayedLevel ();
+
 			if (isPlayerWin) {
-				//add count complete level
-				AddCountCompleteLevel (difficultyState);
+				//add count win level
+				AddCountWinLevel (difficultyState);
 			}
 		}
 
@@ -192,8 +197,12 @@ public class GameController_TicTacToe : BaseGameController {
 	public void ActivateMenuParametrs() {
 		//set params for GameMenu
 		if (PlayerManager.didInit) {
-			GameMenu.SetLanguagePlayer (GetIntLocalization (GetLanguagePlayer ()));
-			GameMenu.SetNamePlayer (PlayerManager.GetPlayerName ());
+			if (GameMenu) {
+				GameMenu.SetLanguagePlayer (GetIntLocalization (GetLanguagePlayer ()));
+				GameMenu.SetNamePlayer (PlayerManager.GetPlayerName ());
+			} else if (PlayFieldManager) {
+				
+			}
 		}
 	}
 
@@ -232,8 +241,12 @@ public class GameController_TicTacToe : BaseGameController {
 		ActivateMenuParametrs ();
 	}
 
-	private void AddCountCompleteLevel(DifficultyState difLevel) {
-		PlayerManager.AddCompleteLevel (difficultyState);
+	private void AddCountPlayedLevel() {
+		PlayerManager.AddPlayedLevel ();
+	}
+
+	private void AddCountWinLevel(DifficultyState difLevel) {
+		PlayerManager.AddWinLevel (difficultyState);
 	}
 
 	private void SaveDataPlayer () {
@@ -286,7 +299,15 @@ public class GameController_TicTacToe : BaseGameController {
 		return res;
 	}
 
-	public string GetCompleteLevelCountInfo () {
+	public string GetPlayedLevelCountInfo () {
+		string res = "[n][n][t][c=green]Played Level Count Info [c]";
+
+		res = res + "[n] * cout played Level = " + PlayerManager.GetPlayedLevel ();
+
+		return res;
+	}
+
+	public string GetWinLevelCountInfo () {
 		string res = "[n][n][t][c=green]Win Level Count Info [c]";
 
 		int difGameCount = 3;
@@ -296,14 +317,14 @@ public class GameController_TicTacToe : BaseGameController {
 
 				DifficultyState carDifGame = (DifficultyState)j;
 
-				int intResult = PlayerManager.GetCompleteLevel (carDifGame);
+				int intResult = PlayerManager.GetWinLevel (carDifGame);
 
 				string stResult = " - " + carDifGame.ToString () + " = " + intResult;
 
 				res = res + stResult;
 		}
 
-		res = res + "[n] * cout win Level = " + PlayerManager.GetCompleteLevel ();
+		res = res + "[n] * cout win Level = " + PlayerManager.GetWinLevel ();
 
 		return res;
 	}
@@ -1943,10 +1964,10 @@ public class GameController_TicTacToe : BaseGameController {
 				ClearLevel (useCoroutineMain);
 			}
 
+			FillLevel (useCoroutineMain);
+
 			//show desccribe level
 			WindowAdwiceShowLevelText ();
-
-			FillLevel (useCoroutineMain);
 
 			// hide window
 			CloseAllUI ();

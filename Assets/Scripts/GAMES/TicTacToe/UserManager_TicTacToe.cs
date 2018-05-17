@@ -11,7 +11,8 @@ class PlayerData_TicTacToe
 
 	public int score;
 
-	public int[] countCompleteLevel;
+	public int countPlayedLevel;
+	public int[] countWinLevel;
 
 	public DateTime firstEnterInGame;
 	public DateTime lastEnterInGame;
@@ -23,7 +24,8 @@ public class UserManager_TicTacToe : BaseUserManager {
 
 	public int difGameCount = 3;
 
-	private int[] countCompleteLevel;
+	private int countPlayedLevel;
+	private int[] countWinLevel;
 
 	private bool[] tutorialVievList;
 
@@ -36,9 +38,13 @@ public class UserManager_TicTacToe : BaseUserManager {
 		SetScore (0);
 	}
 
-	private void ClearCountCompleteLevel() {
+	private void ClearCountPlayedLevel() {
+		countPlayedLevel = 0;
+	}
+
+	private void ClearCountWinLevel() {
 		for (int i = 0; i < difGameCount; i++) {
-			countCompleteLevel [i] = 0;
+			countWinLevel [i] = 0;
 		}
 	}
 
@@ -46,8 +52,10 @@ public class UserManager_TicTacToe : BaseUserManager {
 	{
 		base.GetDefaultData ();
 
-		countCompleteLevel = new int[difGameCount];
-		ClearCountCompleteLevel ();
+		ClearCountPlayedLevel ();
+
+		countWinLevel = new int[difGameCount];
+		ClearCountWinLevel ();
 
 		language = "EN";
 	}
@@ -57,29 +65,42 @@ public class UserManager_TicTacToe : BaseUserManager {
 	public void ClearPlayerProgress() {
 		ClearScore ();
 
-		ClearCountCompleteLevel ();
+		ClearCountPlayedLevel ();
+		ClearCountWinLevel ();
 	}
 
-	public int GetCompleteLevelCount(int difGame = -1) {
+	public int GetPlayedLevelCount() {
+		return countPlayedLevel;
+	}
+
+	public void SetPlayedLevelCount(int count) {
+		countPlayedLevel = count;
+	}
+
+	public void AddPlayedLevel() {
+		countPlayedLevel += 1;
+	}
+
+	public int GetWinLevelCount(int difGame = -1) {
 		int result = 0;
 
 		for (int i = 0; i < difGameCount; i++) {
 			if (
 				(difGame == i) || (difGame == -1)
 			) {
-				result = result + countCompleteLevel [i];
+				result = result + countWinLevel [i];
 			}
 		}
 
 		return result;
 	}
 
-	public void SetCompleteLevelCount(int difGame, int count) {
-		countCompleteLevel[difGame] = count;
+	public void SetWinLevelCount(int difGame, int count) {
+		countWinLevel[difGame] = count;
 	}
 
-	public void AddCompleteLevel(int difGame) {
-		countCompleteLevel[difGame] = countCompleteLevel[difGame] + 1;
+	public void AddWinLevel(int difGame) {
+		countWinLevel[difGame] = countWinLevel[difGame] + 1;
 	}
 
 	private void AddTutorialSize() {
@@ -163,7 +184,9 @@ public class UserManager_TicTacToe : BaseUserManager {
 
 		data.score = GetScore();
 
-		data.countCompleteLevel = countCompleteLevel;
+		data.countPlayedLevel = countPlayedLevel;
+
+		data.countWinLevel = countWinLevel;
 
 		if (data.firstEnterInGame != firstEnterInGame) {
 			data.firstEnterInGame = firstEnterInGame;
@@ -192,8 +215,12 @@ public class UserManager_TicTacToe : BaseUserManager {
 
 			SetScore (data.score);
 
-			if (data.countCompleteLevel != null) {
-				countCompleteLevel = data.countCompleteLevel;
+			if (data.countPlayedLevel != null) {
+				countPlayedLevel = data.countPlayedLevel;
+			}
+
+			if (data.countWinLevel != null) {
+				countWinLevel = data.countWinLevel;
 			}
 
 			if (firstEnterInGame != data.firstEnterInGame) {

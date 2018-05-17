@@ -84,32 +84,40 @@ public class PlayerManager_TicTacToe : BasePlayerManager {
 		DataManager_TicTacToe.ClearPlayerProgress ();
 	}
 
-	public void AddCompleteLevel(DifficultyStates.DifficultyState difGame) {
-		DataManager_TicTacToe.AddCompleteLevel ((int)difGame);
+	public void AddPlayedLevel() {
+		DataManager_TicTacToe.AddPlayedLevel ();
 	}
 
-	public int GetCompleteLevel(List<DifficultyStates.DifficultyState> difGame) {
+	public int GetPlayedLevel() {
+		return DataManager_TicTacToe.GetPlayedLevelCount ();
+	}
+
+	public void AddWinLevel(DifficultyStates.DifficultyState difGame) {
+		DataManager_TicTacToe.AddWinLevel ((int)difGame);
+	}
+
+	public int GetWinLevel(List<DifficultyStates.DifficultyState> difGame) {
 		int result = 0;
 
 		int countDifGame = difGame.Count;
 
 		if ((countDifGame > 0)) {
 			foreach (DifficultyStates.DifficultyState itemDifGame in difGame) {
-				result = result + GetCompleteLevel (itemDifGame);
+				result = result + GetWinLevel (itemDifGame);
 			}
 		} else {
-			result = result + GetCompleteLevel ();
+			result = result + GetWinLevel ();
 		}
 
 		return result;
 	}
 
-	public int GetCompleteLevel(DifficultyStates.DifficultyState difGame) {
-		return DataManager_TicTacToe.GetCompleteLevelCount ((int)difGame);
+	public int GetWinLevel(DifficultyStates.DifficultyState difGame) {
+		return DataManager_TicTacToe.GetWinLevelCount ((int)difGame);
 	}
 
-	public int GetCompleteLevel() {
-		return DataManager_TicTacToe.GetCompleteLevelCount (-1);
+	public int GetWinLevel() {
+		return DataManager_TicTacToe.GetWinLevelCount (-1);
 	}
 
 	public void SetTuorialState(int numPos, bool boVal) {
