@@ -1,26 +1,25 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class AnimationOpenClose : MonoBehaviour {
 
-	public bool hasHideAnimation = false;
+	[SerializeField]
+	private bool hasHideAnimation = false;
+
+	static readonly int open_Anim = Animator.StringToHash ("open");
+	static readonly int hide_Anim = Animator.StringToHash ("hide");
 
 	private Animator animator;
 
+	// main event
 	void Awake () {
-		
-	}
+		animator = GetComponent<Animator> ();
 
-	void Init () {
-		if (!animator) {
-			animator = GetComponent<Animator> ();
-
-			if (animator.parameters.Length > 1) {
-				hasHideAnimation = true;
-			}
+		if (animator.parameters.Length > 1) {
+			hasHideAnimation = true;
 		}
 	}
 
+	// main logic
 	public void Click () {
 		if (IsOpen()) {
 			Close ();
@@ -32,38 +31,35 @@ public class AnimationOpenClose : MonoBehaviour {
 
 	public void Open () {
 		if (!IsOpen ()) {
-			animator.SetBool ("open", true);
+			animator.SetBool (open_Anim, true);
 		}
 	}
 
 	public void Close () {
 		if (IsOpen ()) {
-			animator.SetBool ("open", false);
+			animator.SetBool (open_Anim, false);
 		}
 	}
 
 	public bool IsOpen() {
-		if (!animator)
-			Init ();
-		
-		return animator.GetBool ("open");
+		return animator.GetBool (open_Anim);
 	}
 
 	public void Hide() {
 		if (hasHideAnimation) {
-			animator.SetBool ("hide", true);
+			animator.SetBool (hide_Anim, true);
 		}
 	}
 
 	public void Show() {
 		if (hasHideAnimation) {
-			animator.SetBool ("hide", false);
+			animator.SetBool (hide_Anim, false);
 		}
 	}
 
 	public bool IsShow() {
 		if (hasHideAnimation) {
-			return animator.GetBool ("hide");
+			return animator.GetBool (hide_Anim);
 		} else {
 			return true;
 		}

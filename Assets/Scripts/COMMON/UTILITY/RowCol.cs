@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public struct RowCol {
 	public int row;
 	public int col;
 
+	// main logic
 	public RowCol(int setRor, int setCol) {
 		row = setRor;
 		col = setCol;

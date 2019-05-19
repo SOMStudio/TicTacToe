@@ -3,18 +3,26 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class PointManager_TicTacToe : MonoBehaviour {
-	public int numPanel = 0;
+	[Header("Settings TicTacToe")]
+	[SerializeField]
+	private int numPanel = 0;
 
-	public Image imagePanel;
-	public Text textPanel;
-	public Button buttonPanel;
+	[SerializeField]
+	private Image imagePanel;
+	[SerializeField]
+	private Text textPanel;
+	[SerializeField]
+	private Button buttonPanel;
 
-	public bool locked = false;
+	[SerializeField]
+	private bool locked = false;
 
 	private Color colorPanelDefault;
 
-	public GameController_TicTacToe gameController;
+	[SerializeField]
+	private GameController_TicTacToe gameController;
 
+	// main events
 	void Start () {
 		if (!gameController) {
 			gameController = GameController_TicTacToe.Instance;
@@ -23,6 +31,7 @@ public class PointManager_TicTacToe : MonoBehaviour {
 		colorPanelDefault = imagePanel.color;
 	}
 
+	// main logic
 	public void SetLockState(bool val = true) {
 		locked = val;
 	}

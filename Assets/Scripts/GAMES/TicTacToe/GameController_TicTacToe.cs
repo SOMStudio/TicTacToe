@@ -5,53 +5,82 @@ using System.Collections.Generic;
 using DifficultyStates;
 
 public class GameController_TicTacToe : BaseGameController {
-	public bool initGamePool = false;
+	[SerializeField]
+	private bool initGamePool = false;
 
 	[Header("Play States")]
-	public bool startLevel = false;
-	public bool prepearingGamePool = false;
-	public bool clearingLevel = false;
-	public bool activateDataLevel = false;
-	public bool fillingLevel = false;
-	public bool pauseLevel = false;
-	public bool completeLevel = false;
+	[SerializeField]
+	private bool startLevel = false;
+	[SerializeField]
+	private bool prepearingGamePool = false;
+	[SerializeField]
+	private bool clearingLevel = false;
+	[SerializeField]
+	private bool activateDataLevel = false;
+	[SerializeField]
+	private bool fillingLevel = false;
+	[SerializeField]
+	private bool pauseLevel = false;
+	[SerializeField]
+	private bool completeLevel = false;
 
 	[Header("Develop States")]
-	public bool developState = false;
+	[SerializeField]
+	private bool developState = false;
 
 	[Header("Timer")]
-	public float secUpdateLevelTimer = 1;
+	[SerializeField]
+	private float secUpdateLevelTimer = 1;
 
 	[Header("Game")]
-	public bool playerStep = true;
+	[SerializeField]
+	private bool playerStep = true;
 
-	public int countPointInRow = 3;
-	public int countPointInCol = 3;
+	[SerializeField]
+	private int countPointInRow = 3;
+	[SerializeField]
+	private int countPointInCol = 3;
 
-	public int selNumPoint = -1;
-	public int selNumGlobalRow = -1;
-	public int selNumGlobalCol = -1;
-	public string selNumber = "-1";
-	public bool lockNumber = false;
-	public string signPlayer = "X";
+	[SerializeField]
+	private int selNumPoint = -1;
+	[SerializeField]
+	private int selNumGlobalRow = -1;
+	[SerializeField]
+	private int selNumGlobalCol = -1;
+	[SerializeField]
+	private string selNumber = "-1";
+	[SerializeField]
+	private bool lockNumber = false;
+	[SerializeField]
+	private string signPlayer = "X";
 
-	public Color colorHighlight;
+	[SerializeField]
+	private Color colorHighlight;
 
 	[Header("Help Value")]
-	public int scoreLevel = 0;
-	public int playedLevel = 0;
-	public int winLevel = 0;
-	public int loseLevel = 0;
-	public bool isPlayerLose = false;
-	public bool isPlayerWin = false;
+	[SerializeField]
+	private int scoreLevel = 0;
+	[SerializeField]
+	private int playedLevel = 0;
+	[SerializeField]
+	private int winLevel = 0;
+	[SerializeField]
+	private int loseLevel = 0;
+	[SerializeField]
+	private bool isPlayerLose = false;
+	[SerializeField]
+	private bool isPlayerWin = false;
 
-	public DifficultyState difficultyState = 0;
+	[SerializeField]
+	private DifficultyState difficultyState = 0;
 
 	[Header("User Settings")]
-	public bool useCoroutineMain = true;
+	[SerializeField]
+	private bool useCoroutineMain = true;
 
 	[Header("Error St")]
-	public string errorString = "";
+	[SerializeField]
+	private string errorString = "";
 
 	//saveLeveldate
 	private bool firstPlayerStep_save = true;
@@ -62,11 +91,37 @@ public class GameController_TicTacToe : BaseGameController {
 	[System.NonSerialized]
 	public static GameController_TicTacToe Instance;
 
-	public SceneManager_TicTacToe SceneGameManager;
-	public PlayerManager_TicTacToe PlayerManager;
-	public PlayFieldManager_TicTacToe PlayFieldManager;
-	public GameMenuController_TicTacToe GameMenu;
-	public BaseSoundController SoundManager;
+	[Header("Manager")]
+	[SerializeField]
+	private LevelManager SceneGameManager;
+	[SerializeField]
+	private PlayerManager_TicTacToe PlayerManager;
+	[SerializeField]
+	private PlayFieldManager_TicTacToe PlayFieldManager;
+	[SerializeField]
+	private GameMenuController_TicTacToe GameMenu;
+	[SerializeField]
+	private BaseSoundController SoundManager;
+
+	// main event
+	void Awake () {
+		Init ();
+	}
+
+	void Start () {
+		StartGame ();
+	}
+
+	// main logic
+	public bool DevelopState {
+		get { return developState; }
+		set { developState = value; }
+	}
+
+	public bool UseCoroutineMain {
+		get { return useCoroutineMain; }
+		set { useCoroutineMain = value; }
+	}
 
 	private void Init() {
 		// activate instance
@@ -79,7 +134,7 @@ public class GameController_TicTacToe : BaseGameController {
 		}
 	}
 
-	public SceneManager_TicTacToe GetSceneManager() {
+	public LevelManager GetSceneManager() {
 		return SceneGameManager;
 	}
 
@@ -156,7 +211,69 @@ public class GameController_TicTacToe : BaseGameController {
 		}
 	}
 
-	// player
+	// language part
+	private void InitLanguage () {
+		switch (Application.systemLanguage) {
+		case SystemLanguage.Russian: SetLanguagePlayer("RU"); break;
+		case SystemLanguage.Ukrainian: SetLanguagePlayer("UK"); break;
+		default: SetLanguagePlayer("EN"); break;
+		}
+	}
+
+	public string GetStLocalization(int val) {
+		string stRes = "EN";
+
+		switch (val) {
+		case 0:
+			stRes = "EN";
+			break;
+		case 1:
+			stRes = "UK";
+			break;
+		case 2:
+			stRes = "RU";
+			break;
+		default:
+			break;
+		}
+
+		return stRes;
+	}
+
+	public int GetIntLocalization(string val) {
+		int stRes = 0;
+
+		switch (val) {
+		case "EN":
+			stRes = 0;
+			break;
+		case "UK":
+			stRes = 1;
+			break;
+		case "RU":
+			stRes = 2;
+			break;
+		default:
+			break;
+		}
+
+		return stRes;
+	}
+
+	public void SetLanguagePlayer(string val) {
+		PlayerManager.SetLanguage (val);
+	}
+
+	public string GetLanguagePlayer() {
+		return PlayerManager.GetLanguage ();
+	}
+
+	// System Time
+	public string GetSystemTime() {
+		return System.DateTime.Now.ToShortTimeString ();
+	}
+
+	#region PlayerManager
 	public string GetUserDataPath() {
 		string pathFile = "";
 
@@ -196,7 +313,7 @@ public class GameController_TicTacToe : BaseGameController {
 
 	public void ActivateMenuParametrs() {
 		//set params for GameMenu
-		if (PlayerManager.didInit) {
+		if (PlayerManager.IsInit()) {
 			if (GameMenu) {
 				GameMenu.SetLanguagePlayer (GetIntLocalization (GetLanguagePlayer ()));
 				GameMenu.SetNamePlayer (PlayerManager.GetPlayerName ());
@@ -328,8 +445,9 @@ public class GameController_TicTacToe : BaseGameController {
 
 		return res;
 	}
+	#endregion
 
-	//Scene
+	#region SceneManager
 	private void GoInGame() {
 		SceneGameManager.LoadLevel ("SceneMain");
 	}
@@ -339,65 +457,9 @@ public class GameController_TicTacToe : BaseGameController {
 
 		SceneGameManager.LoadLevel ("SceneMenu");
 	}
+	#endregion
 
-	// language part
-	private void InitLanguage () {
-		switch (Application.systemLanguage) {
-		case SystemLanguage.Russian: SetLanguagePlayer("RU"); break;
-		case SystemLanguage.Ukrainian: SetLanguagePlayer("UK"); break;
-		default: SetLanguagePlayer("EN"); break;
-		}
-	}
-
-	public string GetStLocalization(int val) {
-		string stRes = "EN";
-
-		switch (val) {
-		case 0:
-			stRes = "EN";
-			break;
-		case 1:
-			stRes = "UK";
-			break;
-		case 2:
-			stRes = "RU";
-			break;
-		default:
-			break;
-		}
-
-		return stRes;
-	}
-
-	public int GetIntLocalization(string val) {
-		int stRes = 0;
-
-		switch (val) {
-		case "EN":
-			stRes = 0;
-			break;
-		case "UK":
-			stRes = 1;
-			break;
-		case "RU":
-			stRes = 2;
-			break;
-		default:
-			break;
-		}
-
-		return stRes;
-	}
-
-	public void SetLanguagePlayer(string val) {
-		PlayerManager.SetLanguage (val);
-	}
-
-	public string GetLanguagePlayer() {
-		return PlayerManager.GetLanguage ();
-	}
-
-	// Sound
+	#region SoundManager
 	public void UpdateSoundVolume() {
 		if (SoundManager == null)
 			SoundManager = BaseSoundController.Instance;
@@ -424,13 +486,15 @@ public class GameController_TicTacToe : BaseGameController {
 			SoundManager.PlaySoundByIndex (0, Vector3.zero);
 		}
 	}
+	#endregion
 
-	//Music
+	#region MusicManager
 	public void UpdateMusicVolume() {
-		BaseMusicController.Instance.UpdateValume ();
+		BaseMusicController.Instance.UpdateVolume ();
 	}
+	#endregion
 
-	//Menu
+	#region MenuManager
 	private bool IsLevelComplete() {
 		return !isPlayerLose;
 	}
@@ -735,11 +799,7 @@ public class GameController_TicTacToe : BaseGameController {
 	public void WindowConsoleSmolShowError(string textInformation) {
 		WindowConsoleSmolShowMessage ("ERROR", textInformation);
 	}
-
-	// System Time
-	public string GetSystemTime() {
-		return System.DateTime.Now.ToShortTimeString ();
-	}
+	#endregion
 
 	// My predifine action
 	public int GetRandomInt(int minNum, int maxNum, int multNum = 1) {
@@ -874,9 +934,9 @@ public class GameController_TicTacToe : BaseGameController {
 
 	public bool CursorOverUI() {
 		if (GameMenu) {
-			return GameMenu.overMenuUI;
+			return GameMenu.OverMenuUI;
 		} else {
-			return PlayFieldManager.overMenuUI;
+			return PlayFieldManager.OverMenuUI;
 		}
 	}
 
@@ -2111,25 +2171,5 @@ public class GameController_TicTacToe : BaseGameController {
 		}
 	}
 
-	//standart 
-
-	void Awake () {
-		Init ();
-	}
-
-	void Start () {
-		StartGame ();
-	}
-
-	void Update () {
-		
-	}
-}
-
-[System.Serializable]
-public class CountOpenPanel {
-	public int countInEasy = 0;
-	public int countInMedium = 0;
-	public int countInHard = 0;
 }
   

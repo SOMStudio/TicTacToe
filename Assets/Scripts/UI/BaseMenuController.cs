@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -10,90 +9,146 @@ public class BaseMenuController : MonoBehaviour {
 
 	public bool didInit = false;
 
-	public string gamePrefsName= "DefaultGame";
+	[Header("Base Settings")]
+	[SerializeField]
+	protected string gamePrefsName= "DefaultGame"; // DO NOT FORGET TO SET THIS IN THE EDITOR!!
+	//audio
+	[SerializeField]
+	private float audioSFXSliderValue;
+	[SerializeField]
+	private Slider audioSFXSlider;
+	[SerializeField]
+	private float audioMusicSliderValue;
+	[SerializeField]
+	private Slider audioMusicSlider;
+	//graphic
+	[SerializeField]
+	private float graphicsSliderValue;
+	[SerializeField]
+	private Slider graphicsSlider;
+	[SerializeField]
+	private int graphicsDefaultValue = -1;
 
-	public float audioSFXSliderValue;
-	public Slider audioSFXSlider;
-	public float audioMusicSliderValue;
-	public Slider audioMusicSlider;
-
-	public float graphicsSliderValue;
-	public Slider graphicsSlider;
-	public int graphicsDefaultValue = -1;
-
-	private int detailLevels= 6;
+	private int detailLevels = 6;
 	private bool needSaveOptions = false;
 
-	//MainMenu controller
-	public List<AnimationOpenClose> panelAnimations;
-	public List<AnimationOpenClose> windowAnimations;
-	public List<bool> accessToPanel;
+	[Header("Main window list")]
+	[SerializeField]
+	private AnimationOpenClose[] panelAnimations;
+	[SerializeField]
+	private AnimationOpenClose[] windowAnimations;
+	[SerializeField]
+	private bool[] accessToPanel;
 
-	public AnimationOpenClose panelDisActivateAnimation;
-	public AnimationOpenClose windowDisActivateAnimation;
-	public AnimationOpenClose consoleWindowDisActivateAnimation;
+	[Header("DisActivate window")]
+	[SerializeField]
+	private AnimationOpenClose panelDisActivateAnimation;
+	[SerializeField]
+	private AnimationOpenClose windowDisActivateAnimation;
+	[SerializeField]
+	private AnimationOpenClose consoleWindowDisActivateAnimation;
 
-	public bool menuActive = false;
-	public int panelActive = -1;
-	public int windowActive = -1;
-	public int consoleWindowActive = -1;
+	[Header("Menu Data")]
+	[SerializeField]
+	protected bool menuActive = false;
+	[SerializeField]
+	protected int panelActive = -1;
+	[SerializeField]
+	protected int windowActive = -1;
+	[SerializeField]
+	protected int consoleWindowActive = -1;
 
-	//Start Game window controller
-	public AnimationOpenClose windowStartGameAnimation;
+	[Header("StartGame window")]
+	[SerializeField]
+	protected bool windowStartActive = true;
+	[SerializeField]
+	private AnimationOpenClose windowStartGameAnimation;
 
-	//Advice window controller
-	public AnimationOpenClose windowAdviceAnimation;
-	public Text windowAdviceText;
+	[Header("Advice window")]
+	[SerializeField]
+	private AnimationOpenClose windowAdviceAnimation;
+	[SerializeField]
+	private Text windowAdviceText;
 
-	//Inform window controller
-	public AnimationOpenClose windowInformAnimation;
-	public List<Text> windowInformTextList;
+	[Header("Inform window")]
+	[SerializeField]
+	private AnimationOpenClose windowInformAnimation;
+	[SerializeField]
+	private Text[] windowInformTextList;
 
-	//console window information
-	public Text consoleWInformSmolTextHead;
-	public Text consoleWInformSmolTextInfo;
-	public GameObject consoleWInformSmolPanelImage;
-	public Image consoleWInformSmolImage;
-
-	public Text consoleWInformBigTextHead;
-	public Text consoleWInformBigTextInfo;
-	public GameObject consoleWInformBigPanelImage;
-	public Image consoleWInformBigImage;
-
-	public Text consoleWInYesNoTextHead;
+	[Header("Console windows")]
+	//smol
+	[SerializeField]
+	private Text consoleWInformSmolTextHead;
+	[SerializeField]
+	private Text consoleWInformSmolTextInfo;
+	[SerializeField]
+	private GameObject consoleWInformSmolPanelImage;
+	[SerializeField]
+	private Image consoleWInformSmolImage;
+	//Big
+	[SerializeField]
+	private Text consoleWInformBigTextHead;
+	[SerializeField]
+	private Text consoleWInformBigTextInfo;
+	[SerializeField]
+	private GameObject consoleWInformBigPanelImage;
+	[SerializeField]
+	private Image consoleWInformBigImage;
+	//YesNo
+	[SerializeField]
+	private Text consoleWInYesNoTextHead;
 	private UnityEvent consoleWInYesNoActinYes = new UnityEvent();
+
+	// main event
 
 	void Start()
 	{
 		RestoreOptionsPref ();
 	}
 
-	public virtual void RestoreOptionsPref()
-	{
-		// set up default options, if they have been saved out to prefs already
-		if (PlayerPrefs.HasKey (gamePrefsName + "_SFXVol")) {
-			audioSFXSliderValue = PlayerPrefs.GetFloat (gamePrefsName + "_SFXVol");
-		} else {
-			// if we are missing an SFXVol key, we won't got audio defaults set up so let's do that now
-			audioSFXSliderValue = 1;
-			audioMusicSliderValue = 1;
+	// main logic
 
+	protected virtual void RestoreOptionsPref()
+	{
+		string stKey = "";
+
+		// set up default options, if they have been saved out to prefs already
+		stKey = string.Format("{0}_SFXVol", gamePrefsName);
+		if (PlayerPrefs.HasKey (stKey)) {
+			audioSFXSliderValue = PlayerPrefs.GetFloat (stKey);
+		} else {
+			// if we are missing an SFXVol key, we won't got audio defaults set up
+			audioSFXSliderValue = 1;
+		}
+		stKey = string.Format("{0}_MusicVol", gamePrefsName);
+		if (PlayerPrefs.HasKey (stKey)) {
+			audioMusicSliderValue = PlayerPrefs.GetFloat (stKey);
+		} else {
+			// defaults set up
+			audioMusicSliderValue = 1;
+		}
+		stKey = string.Format("{0}_GraphicsDetail", gamePrefsName);
+		if (PlayerPrefs.HasKey (stKey)) {
+			graphicsSliderValue = PlayerPrefs.GetFloat (stKey);
+		} else {
+			// defaults set up
 			if (graphicsDefaultValue == -1) {
 				string[] names = QualitySettings.names;
 				detailLevels = names.Length;
-				graphicsSliderValue = detailLevels;
+
+				switch (Application.platform) {
+				case RuntimePlatform.Android:
+				case RuntimePlatform.IPhonePlayer:
+					graphicsSliderValue = 0;
+					break;
+				default:
+					graphicsSliderValue = detailLevels;
+					break;
+				}
 			} else {
 				graphicsSliderValue = graphicsDefaultValue;
 			}
-
-			// save defaults
-			SaveOptionsPrefs ();
-		}
-		if (PlayerPrefs.HasKey (gamePrefsName + "_MusicVol")) {
-			audioMusicSliderValue = PlayerPrefs.GetFloat (gamePrefsName + "_MusicVol");
-		}
-		if (PlayerPrefs.HasKey (gamePrefsName + "_GraphicsDetail")) {
-			graphicsSliderValue = PlayerPrefs.GetFloat (gamePrefsName + "_GraphicsDetail");
 		}
 
 		Debug.Log ("quality=" + graphicsSliderValue);
@@ -110,20 +165,28 @@ public class BaseMenuController : MonoBehaviour {
 		}
 		if (graphicsSlider != null) {
 			//chack max value
-			List<string> namesQlt = new List<string> (QualitySettings.names);
-			graphicsSlider.maxValue = namesQlt.Count - 1;
+			string[] namesQlt = QualitySettings.names;
+			graphicsSlider.maxValue = namesQlt.Length - 1;
 
 			graphicsSlider.value = graphicsSliderValue;
 		}
 
+		if (windowAdviceText)
+			windowAdviceText.text = "";
+
 		didInit = true;
 	}
 
-	public virtual void SaveOptionsPrefs()
+	protected virtual void SaveOptionsPrefs()
 	{
-		PlayerPrefs.SetFloat(gamePrefsName+"_SFXVol", audioSFXSliderValue);
-		PlayerPrefs.SetFloat(gamePrefsName+"_MusicVol", audioMusicSliderValue);
-		PlayerPrefs.SetFloat(gamePrefsName+"_GraphicsDetail", graphicsSliderValue);
+		string stKey = "";
+
+		stKey = string.Format("{0}_SFXVol", gamePrefsName);
+		PlayerPrefs.SetFloat(stKey, audioSFXSliderValue);
+		stKey = string.Format("{0}_MusicVol", gamePrefsName);
+		PlayerPrefs.SetFloat(stKey, audioMusicSliderValue);
+		stKey = string.Format("{0}_GraphicsDetail", gamePrefsName);
+		PlayerPrefs.SetFloat(stKey, graphicsSliderValue);
 
 		// set the quality setting
 		QualitySettings.SetQualityLevel( (int)graphicsSliderValue, true);
@@ -153,7 +216,7 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
-	public virtual void ExitGame()
+	protected virtual void ExitGame()
 	{
 		#if UNITY_EDITOR
 		EditorApplication.isPlaying = false;
@@ -162,9 +225,10 @@ public class BaseMenuController : MonoBehaviour {
 		#endif
 	}
 
-	//MainMenu
+	#region Animations
+	//panels
 	private void PlayPanelAnim_Open(int number) {
-		if (number < panelAnimations.Count) {
+		if (number < panelAnimations.Length) {
 			AnimationOpenClose activeA = panelAnimations [number];
 
 			if (activeA) {
@@ -176,7 +240,7 @@ public class BaseMenuController : MonoBehaviour {
 	}
 
 	private void PlayPanelAnim_Close(int number) {
-		if (number < panelAnimations.Count) {
+		if (number < panelAnimations.Length) {
 			AnimationOpenClose activeA = panelAnimations [number];
 
 			if (activeA) {
@@ -188,7 +252,7 @@ public class BaseMenuController : MonoBehaviour {
 	}
 
 	private void PlayPanelAnim_Hide(int number) {
-		if (number < panelAnimations.Count) {
+		if (number < panelAnimations.Length) {
 			AnimationOpenClose activeA = panelAnimations [number];
 
 			if (activeA) {
@@ -198,7 +262,7 @@ public class BaseMenuController : MonoBehaviour {
 	}
 
 	private void PlayPanelAnim_Show(int number) {
-		if (number < panelAnimations.Count) {
+		if (number < panelAnimations.Length) {
 			AnimationOpenClose activeA = panelAnimations [number];
 
 			if (activeA) {
@@ -208,7 +272,7 @@ public class BaseMenuController : MonoBehaviour {
 	}
 
 	private void PlayWindowAnim_Open(int number) {
-		if (number < windowAnimations.Count) {
+		if (number < windowAnimations.Length) {
 			AnimationOpenClose activeA = windowAnimations [number];
 
 			if (activeA) {
@@ -220,7 +284,7 @@ public class BaseMenuController : MonoBehaviour {
 	}
 
 	private void PlayWindowAnim_Close(int number) {
-		if (number < windowAnimations.Count) {
+		if (number < windowAnimations.Length) {
 			AnimationOpenClose activeA = windowAnimations [number];
 
 			if (activeA) {
@@ -243,6 +307,7 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
+	//window disActivate
 	private void WindowDisActivate_Open() {
 		if (windowDisActivateAnimation) {
 			windowDisActivateAnimation.Open ();
@@ -255,6 +320,7 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
+	//consoleWindows disActivate
 	private void ConsoleWindowDisActivate_Open() {
 		if (consoleWindowDisActivateAnimation) {
 			consoleWindowDisActivateAnimation.Open ();
@@ -267,7 +333,7 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
-	//adwice window
+	//startGame window
 	private void PlayWindowStartGameAnim_Open() {
 		if (windowStartGameAnimation) {
 			AnimationOpenClose activeA = windowStartGameAnimation;
@@ -292,7 +358,7 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
-	//adwice window
+	//advice window
 	private void PlayWindowAdviceAnim_Open() {
 		if (windowAdviceAnimation) {
 			AnimationOpenClose activeA = windowAdviceAnimation;
@@ -300,6 +366,8 @@ public class BaseMenuController : MonoBehaviour {
 			if (activeA) {
 				if (!activeA.IsOpen()) {
 					activeA.Open ();
+
+					ActivateAdviceWEvent ();
 				}
 			}
 		}
@@ -313,37 +381,12 @@ public class BaseMenuController : MonoBehaviour {
 				if (activeA.IsOpen()) {
 					activeA.Close ();
 
+					DisActivateAdviceWEvent ();
+
 					Invoke ("WindowAdviceClearText", 0.2f);
 				}
 			}
 		}
-	}
-
-	public void WindowAdviceSetText(string stAdvice) {
-		if (windowAdviceText) {
-			string stText = windowAdviceText.text;
-			string[] stRes = stText.Split (new string[] { "\n", "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
-
-			if (stRes.Length > 2) {
-				for (int i = 1; i < stRes.Length; i++) {
-					if (i==1) {
-						windowAdviceText.text = stRes [i];
-					} else {
-						windowAdviceText.text += "\n" + stRes [i];
-					}
-				}
-			}
-
-			if (stRes.Length == 0) {
-				windowAdviceText.text = ConvertSpecTextChar (stAdvice);
-			} else {
-				windowAdviceText.text += "\n" + ConvertSpecTextChar (stAdvice);
-			}
-		}
-	}
-
-	public void WindowAdviceClearText() {
-		windowAdviceText.text = "";
 	}
 
 	//inform window
@@ -374,75 +417,78 @@ public class BaseMenuController : MonoBehaviour {
 			}
 		}
 	}
+	#endregion
 
-	public void WindowInformSetText(string stAdvice, int numText) {
-		if (numText < windowInformTextList.Count) {
-			if (windowInformTextList [numText]) {
-				windowInformTextList [numText].text = ConvertSpecTextChar (stAdvice);
-			}
-		}
-	}
-
-	public void WindowInformSetText_1(string stAdvice) {
-		WindowInformSetText (stAdvice, 0);
-	}
-
-	public void WindowInformSetText_2(string stAdvice) {
-		WindowInformSetText (stAdvice, 1);
-	}
-
-	public void WindowInformSetText_3(string stAdvice) {
-		WindowInformSetText (stAdvice, 2);
-	}
-
-	// methods for use
-
-	public virtual void ActivateMenuEvent() {
+	#region Events
+	// Events for use
+	protected virtual void ActivateMenuEvent() {
 		
 	}
 
-	public virtual void DisActivateMenuEvent() {
+	protected virtual void DisActivateMenuEvent() {
 
 	}
 
-	public virtual void ChancheMenuEvent(int number) {
+	protected virtual void ChancheMenuEvent(int number) {
 
 	}
 
-	public virtual void ActivateWindowEvent() {
+	protected virtual void ActivateWindowEvent() {
 
 	}
 
-	public virtual void DisActivateWindowEvent() {
+	protected virtual void DisActivateWindowEvent() {
 
 	}
 
-	public virtual void ChancheWindowEvent(int number) {
+	protected virtual void ChancheWindowEvent(int number) {
 
 	}
 
-	public virtual void ActivateConsoleWEvent() {
+	protected virtual void ActivateConsoleWEvent() {
 
 	}
 
-	public virtual void DisActivateConsoleWEvent() {
+	protected virtual void DisActivateConsoleWEvent() {
 
 	}
 
-	public virtual void ChancheConsoleWEvent(int number) {
+	protected virtual void ChancheConsoleWEvent(int number) {
 
 	}
 
-	private void ShowPanelMenu() {
-		for (int i = 0; i < accessToPanel.Count; i++) {
+	protected virtual void ActivateAdviceWEvent() {
+
+	}
+
+	protected virtual void DisActivateAdviceWEvent() {
+
+	}
+
+	protected virtual void ActivateInformWEvent() {
+
+	}
+
+	protected virtual void DisActivateInformWEvent() {
+
+	}
+	#endregion
+
+	//panels
+	public int PanelActive {
+		get { return panelActive; }
+	}
+
+	protected void ShowPanelMenu() {
+		for (int i = 0; i < accessToPanel.Length; i++) {
 			if (accessToPanel [i] == true) {
 				PlayPanelAnim_Show (i);
 			}
 		}
 	}
 
-	private void HidePanelMenu() {
-		for (int i = 0; i < accessToPanel.Count; i++) {
+	protected void HidePanelMenu() {
+		for (int i = 0; i < accessToPanel.Length; i++) {
 			if (accessToPanel [i] == true) {
 				PlayPanelAnim_Hide (i);
 			}
@@ -508,6 +554,11 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
+	//windows
+	public int WindowActive {
+		get { return windowActive; }
+	}
+
 	public void ActivateWindow(int number) {
 		if (windowActive == number) {
 			DisActivateWindow ();
@@ -550,6 +601,11 @@ public class BaseMenuController : MonoBehaviour {
 
 			needSaveOptions = !needSaveOptions;
 		}
+	}
+
+	//consoleWindows
+	public int ConsoleWindowActive {
+		get { return consoleWindowActive; }
 	}
 
 	public void ActivateConsoleWindow(int number) {
@@ -596,94 +652,6 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
-	//advice
-	public void ShowWindowStartGame() {
-		PlayWindowStartGameAnim_Open ();
-
-		if (IsInvoking ("PlayWindowStartGameAnim_Close")) {
-			CancelInvoke ("PlayWindowStartGameAnim_Close");
-		}
-	}
-
-	public void HideWindowStartGame() {
-		if (IsInvoking ("PlayWindowStartGameAnim_Close")) {
-
-		} else {
-			PlayWindowStartGameAnim_Close ();
-		}
-	}
-
-	//advice
-	public void ShowWindowAdvice() {
-		PlayWindowAdviceAnim_Open ();
-
-		if (IsInvoking ("PlayWindowAdviceAnim_Close")) {
-			CancelInvoke ("PlayWindowAdviceAnim_Close");
-		}
-	}
-
-	public void HideWindowAdvice() {
-		if (IsInvoking ("PlayWindowAdviceAnim_Close")) {
-
-		} else {
-			PlayWindowAdviceAnim_Close ();
-		}
-	}
-
-	public void ShowWindowAdviceAtTime(float timeShow) {
-		PlayWindowAdviceAnim_Open ();
-
-		if (IsInvoking ("PlayWindowAdviceAnim_Close")) {
-			CancelInvoke ("PlayWindowAdviceAnim_Close");
-		}
-
-		Invoke ("PlayWindowAdviceAnim_Close", timeShow);
-	}
-
-	//inform
-	public virtual void ActivateInformWEvent() {
-
-	}
-
-	public virtual void DisActivateInformWEvent() {
-
-	}
-
-	public void ShowWindowInform() {
-		PlayWindowInformAnim_Open ();
-	}
-
-	public void HideWindowInform() {
-		PlayWindowInformAnim_Close ();
-	}
-
-	//console information
-	public virtual bool HasSpecKeyText(string st) {
-		return false;
-	}
-
-	public virtual string ConvertSpecKeyText(string st) {
-		if (HasSpecKeyText(st)) {
-			// in this override place set convert
-		}
-
-		return st;
-	}
-
-	public string ConvertSpecTextChar(string st) {
-		// text key
-		if (HasSpecKeyText (st)) {
-			st = ConvertSpecKeyText (st);
-		}
-
-		// text color
-		if (st.IndexOf ("[c=") >= 0) {
-			st = st.Replace ("[c=red]", "<color=red>").Replace ("[c=blue]", "<color=blue>").Replace ("[c=green]", "<color=green>").Replace ("[c]", "</color>");
-		}
-
-		return st.Replace ("[n]", "\n").Replace ("[t]", "\t");
-	}
-
 	public void ConsoleWinInformationSmol_SetInf(string textHead, string textInformation, string pictureResors = "") {
 		consoleWInformSmolTextHead.text = ConvertSpecTextChar(textHead);
 		consoleWInformSmolTextInfo.text = ConvertSpecTextChar(textInformation);
@@ -720,20 +688,122 @@ public class BaseMenuController : MonoBehaviour {
 		}
 	}
 
+	//startGame
+	public void ShowWindowStartGame() {
+		PlayWindowStartGameAnim_Open ();
+		windowStartActive = true;
+
+		if (IsInvoking ("PlayWindowStartGameAnim_Close")) {
+			CancelInvoke ("PlayWindowStartGameAnim_Close");
+		}
+	}
+
+	public void HideWindowStartGame() {
+		if (IsInvoking ("PlayWindowStartGameAnim_Close")) {
+
+		} else {
+			PlayWindowStartGameAnim_Close ();
+			windowStartActive = false;
+		}
+	}
+
+	//advice
+	public void ShowWindowAdvice() {
+		PlayWindowAdviceAnim_Open ();
+
+		if (IsInvoking ("PlayWindowAdviceAnim_Close")) {
+			CancelInvoke ("PlayWindowAdviceAnim_Close");
+		}
+	}
+
+	public void HideWindowAdvice() {
+		if (IsInvoking ("PlayWindowAdviceAnim_Close")) {
+
+		} else {
+			PlayWindowAdviceAnim_Close ();
+		}
+	}
+
+	public void ShowWindowAdviceAtTime(float timeShow) {
+		PlayWindowAdviceAnim_Open ();
+
+		if (IsInvoking ("PlayWindowAdviceAnim_Close")) {
+			CancelInvoke ("PlayWindowAdviceAnim_Close");
+		}
+
+		Invoke ("PlayWindowAdviceAnim_Close", timeShow);
+	}
+
+	public void WindowAdviceSetText(string stAdvice) {
+		if (windowAdviceText) {
+			string stText = windowAdviceText.text;
+			string[] stRes = stText.Split (new string[] { "\n", "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+
+			if (stRes.Length > 2) {
+				for (int i = 1; i < stRes.Length; i++) {
+					if (i==1) {
+						windowAdviceText.text = stRes [i];
+					} else {
+						windowAdviceText.text = string.Format ("{0}\n{1}", windowAdviceText.text, stRes [i]);
+					}
+				}
+			}
+
+			if (stRes.Length == 0) {
+				windowAdviceText.text = ConvertSpecTextChar (stAdvice);
+			} else {
+				windowAdviceText.text = string.Format ("{0}\n{1}", windowAdviceText.text, ConvertSpecTextChar (stAdvice));
+			}
+		}
+	}
+
+	public void WindowAdviceClearText() {
+		windowAdviceText.text = "";
+	}
+
+	//inform
+	public void ShowWindowInform() {
+		PlayWindowInformAnim_Open ();
+	}
+
+	public void HideWindowInform() {
+		PlayWindowInformAnim_Close ();
+	}
+
+	public void WindowInformSetText(string stAdvice, int numText) {
+		if (numText < windowInformTextList.Length) {
+			if (windowInformTextList [numText]) {
+				windowInformTextList [numText].text = ConvertSpecTextChar (stAdvice);
+			}
+		}
+	}
+
+	public void WindowInformSetText_1(string stAdvice) {
+		WindowInformSetText (stAdvice, 0);
+	}
+
+	public void WindowInformSetText_2(string stAdvice) {
+		WindowInformSetText (stAdvice, 1);
+	}
+
+	public void WindowInformSetText_3(string stAdvice) {
+		WindowInformSetText (stAdvice, 2);
+	}
+
 	//console YesNo
-	public void ConsoleWinYesNo_SetTxt(string val) {
+	protected void ConsoleWinYesNo_SetTxt(string val) {
 		consoleWInYesNoTextHead.text = ConvertSpecTextChar(val);
 	}
 
-	public void ConsoleWinYesNo_SetYesAction(UnityAction val) {
+	protected void ConsoleWinYesNo_SetYesAction(UnityAction val) {
 		consoleWInYesNoActinYes.AddListener (val);
 	}
 
-	public void ConsoleWinYesNo_ClearYesAction() {
+	protected void ConsoleWinYesNo_ClearYesAction() {
 		consoleWInYesNoActinYes.RemoveAllListeners ();
 	}
 
-	public void ConsoleWinYesNo_ButtonYes() {
+	protected void ConsoleWinYesNo_ButtonYes() {
 		consoleWInYesNoActinYes.Invoke ();
 
 		DisActivateConsoleWindow ();
@@ -741,9 +811,36 @@ public class BaseMenuController : MonoBehaviour {
 		ConsoleWinYesNo_ClearYesAction ();
 	}
 
-	public void ConsoleWinYesNo_ButtonNo() {
+	protected void ConsoleWinYesNo_ButtonNo() {
 		DisActivateConsoleWindow ();
 
 		ConsoleWinYesNo_ClearYesAction ();
+	}
+
+	//convert spec text
+	protected virtual bool HasSpecKeyText(string st) {
+		return false;
+	}
+
+	protected virtual string ConvertSpecKeyText(string st) {
+		if (HasSpecKeyText(st)) {
+			// in this override place set convert
+		}
+
+		return st;
+	}
+
+	public string ConvertSpecTextChar(string st) {
+		// text key
+		if (HasSpecKeyText (st)) {
+			st = ConvertSpecKeyText (st);
+		}
+
+		// text color
+		if (st.IndexOf ("[c=") >= 0) {
+			st = st.Replace ("[c=red]", "<color=red>").Replace ("[c=blue]", "<color=blue>").Replace ("[c=green]", "<color=green>").Replace ("[c]", "</color>");
+		}
+
+		return st.Replace ("[n]", "\n").Replace ("[t]", "\t");
 	}
 }

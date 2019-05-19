@@ -5,6 +5,7 @@ public class ContentCorrectionPos : MonoBehaviour {
 
 	private Transform transformActive;
 
+	// main events
 	void Awake () {
 		transformActive = GetComponent<Transform> ();
 	}

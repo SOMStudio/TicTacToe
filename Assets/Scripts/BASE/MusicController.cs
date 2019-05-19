@@ -3,12 +3,12 @@ using System.Collections;
 
 public class MusicController : MonoBehaviour {
 
-	public string gamePrefsName= "DefaultGame"; // DO NOT FORGET TO SET THIS IN THE EDITOR!!
+	[SerializeField]
+	private string gamePrefsName= "DefaultGame"; // DO NOT FORGET TO SET THIS IN THE EDITOR!!
 
+	[Range(0, 1)]
 	public float volume;
-
 	public AudioClip music;
-	
 	public bool loopMusic;
 	
 	private AudioSource source;
@@ -20,29 +20,19 @@ public class MusicController : MonoBehaviour {
 	private float volumeON;
 	private float targetVolume;
 
-	public float fadeTime=15f;
-	public bool shouldFadeInAtStart= true;
+	public float fadeTime = 15f;
+	public bool shouldFadeInAtStart = true;
 
-	[System.NonSerialized]
-	public static MusicController Instance;
-
-	void Awake ()
-	{
-		// activate instance
-		if (Instance == null) {
-			Instance = this;
-		} else if (Instance != this) {
-			Destroy (gameObject);
-		}
-	}
-
+	// main event
 	void Start ()
 	{
-		// keep this object alive
-		DontDestroyOnLoad (this.gameObject);
-
 		// we will grab the volume from PlayerPrefs when this script first starts
-		volumeON= PlayerPrefs.GetFloat(gamePrefsName+"_MusicVol");
+		string stKey = string.Format("{0}_MusicVol", gamePrefsName);
+		if (PlayerPrefs.HasKey (stKey)) {
+			volumeON = PlayerPrefs.GetFloat (stKey);
+		} else {
+			volumeON = 1;
+		}
 	
 		// create a game object and add an AudioSource to it, to play music on
 		sourceGO= new GameObject("Music_AudioSource");
@@ -92,12 +82,13 @@ public class MusicController : MonoBehaviour {
 		}
 	}
 
+	// main logic
 	public void UpdateVolume ( float fadeAmount = 2f ) {
 		if (source) {
 			volume = source.volume;
 			fadeState = 0;
 			targetFadeState = 1;
-			volumeON = PlayerPrefs.GetFloat (gamePrefsName + "_MusicVol");
+			volumeON = PlayerPrefs.GetFloat (string.Format("{0}_MusicVol", gamePrefsName));
 			targetVolume = volumeON;
 			fadeTime = fadeAmount;
 		}

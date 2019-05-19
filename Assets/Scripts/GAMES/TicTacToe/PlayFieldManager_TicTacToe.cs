@@ -3,30 +3,44 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class PlayFieldManager_TicTacToe : BaseMenuController {
-	public bool overMenuUI = false;
+	[Header("Settings TicTacToe")]
+	[SerializeField]
+	private bool overMenuUI = false;
 
-	public PointManager_TicTacToe[] pointList;
+	[SerializeField]
+	private PointManager_TicTacToe[] pointList;
 
-	public GameObject[] developList;
+	[SerializeField]
+	private GameObject[] developList;
 
-	// window Game
-	public Text systemTime;
-	public Text bonusPlayer;
+	[Header("Playfield")]
+	[SerializeField]
+	private Text systemTime;
+	[SerializeField]
+	private Text bonusPlayer;
 
-	public Text countPlayedGame;
-	public Text countWinGame;
-	public Text countLoseGame;
+	[SerializeField]
+	private Text countPlayedGame;
+	[SerializeField]
+	private Text countWinGame;
+	[SerializeField]
+	private Text countLoseGame;
 
-	public Image panelPlayerImage;
-	public Image panelAIImage;
-	public Color defColorPanel;
+	[SerializeField]
+	private Image panelPlayerImage;
+	[SerializeField]
+	private Image panelAIImage;
+	[SerializeField]
+	private Color defColorPanel;
 
-	//reference for GameControl
-	public GameController_TicTacToe gameController;
+	[Header("Game controller")]
+	[SerializeField]
+	private GameController_TicTacToe gameController;
 
 	[System.NonSerialized]
 	public static PlayFieldManager_TicTacToe Instance;
 
+	// main events
 	void Awake () {
 		// activate instance
 		if (Instance == null) {
@@ -36,7 +50,8 @@ public class PlayFieldManager_TicTacToe : BaseMenuController {
 		}
 	}
 
-	public override void RestoreOptionsPref() {
+	// main logic
+	protected override void RestoreOptionsPref() {
 		didInit = false;
 
 		if (panelPlayerImage) {
@@ -54,29 +69,28 @@ public class PlayFieldManager_TicTacToe : BaseMenuController {
 		didInit = true;
 
 		//hide develop objects
-		if (!gameController.developState) {
+		if (!gameController.DevelopState) {
 			HideDevelopList ();
 		}
 	}
 
-	// events
-
-	public override void ActivateWindowEvent() {
+	#region event
+	protected override void ActivateWindowEvent() {
 		//play sound button-click
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void DisActivateWindowEvent() {
+	protected override void DisActivateWindowEvent() {
 		//play sound button-click
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void ChancheWindowEvent(int number) {
+	protected override void ChancheWindowEvent(int number) {
 		//play sound button-click
 		gameController.PlaySoundByIndex (3);
 	}
 
-	public override void ActivateConsoleWEvent ()
+	protected override void ActivateConsoleWEvent ()
 	{
 		gameController.PauseGameWithDelay (0.2f);
 
@@ -84,7 +98,7 @@ public class PlayFieldManager_TicTacToe : BaseMenuController {
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void DisActivateConsoleWEvent ()
+	protected override void DisActivateConsoleWEvent ()
 	{
 		// if out from menu in game
 		gameController.ContinueGame ();
@@ -93,23 +107,28 @@ public class PlayFieldManager_TicTacToe : BaseMenuController {
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void ChancheConsoleWEvent(int number) {
+	protected override void ChancheConsoleWEvent(int number) {
 
 	}
 
-	public override void ActivateInformWEvent ()
+	protected override void ActivateInformWEvent ()
 	{
 		//play sound button-click
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void DisActivateInformWEvent ()
+	protected override void DisActivateInformWEvent ()
 	{
 		//play sound button-click
 		gameController.PlaySoundByIndex (2);
 	}
+	#endregion
 
 	// main part
+	public bool OverMenuUI {
+		get { return overMenuUI; }
+	}
+
 	public void GoInMenu() {
 		gameController.GoInMenu_Button ();
 	}

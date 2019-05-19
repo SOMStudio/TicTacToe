@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace DifficultyStates
+﻿namespace DifficultyStates
 {
 	public enum DifficultyState
 	{

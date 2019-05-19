@@ -1,33 +1,46 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class GameMenuController_TicTacToe : BaseMenuController {
-	public bool overMenuUI = false;
+	[Header("Settings TicTacToe")]
+	[SerializeField]
+	private bool overMenuUI = false;
 
-	public string namePlayerVal = "Anonim";
-	public InputField namePlayer;
+	[SerializeField]
+	private string namePlayerVal = "Anonim";
+	[SerializeField]
+	private InputField namePlayer;
 
-	public int languagePlayerVal = 0;
-	public Dropdown languagePlayer;
+	[SerializeField]
+	private int languagePlayerVal = 0;
+	[SerializeField]
+	private Dropdown languagePlayer;
 
-	public int difficaltyPlayerVal = 0;
-	public Toggle[] difficultyToggleList;
+	[SerializeField]
+	private int difficaltyPlayerVal = 0;
+	[SerializeField]
+	private Toggle[] difficultyToggleList;
 
-	public int multiThread = 1;
-	public Toggle multiThreadToggle;
+	[SerializeField]
+	private int multiThread = 1;
+	[SerializeField]
+	private Toggle multiThreadToggle;
 
-	public Text versionText;
+	[SerializeField]
+	private Text versionText;
 
 	// window Arcade
-	public Text scorePlayer;
+	[SerializeField]
+	private Text scorePlayer;
 
 	//reference for GameControl
-	public GameController_TicTacToe gameController;
+	[SerializeField]
+	private GameController_TicTacToe gameController;
 
 	[System.NonSerialized]
 	public static GameMenuController_TicTacToe Instance;
 
+	// main event
 	void Awake () {
 		// activate instance
 		if (Instance == null) {
@@ -37,7 +50,8 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 		}
 	}
 
-	public override void RestoreOptionsPref() {
+	// main logic
+	protected override void RestoreOptionsPref() {
 		base.RestoreOptionsPref ();
 
 		didInit = false;
@@ -70,7 +84,7 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 		gameController.ActivateMenuParametrs ();
 	}
 
-	public override void SaveOptionsPrefs ()
+	protected override void SaveOptionsPrefs ()
 	{
 		base.SaveOptionsPrefs ();
 
@@ -83,7 +97,7 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 		gameController.UpdateMusicVolume ();
 	}
 
-	public override void ExitGame ()
+	protected override void ExitGame ()
 	{
 		SaveOptionsPrefs ();
 
@@ -94,24 +108,23 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 		base.ExitGame ();
 	}
 
-	// event
-
-	public override void ActivateWindowEvent() {
+	#region event
+	protected override void ActivateWindowEvent() {
 		//play sound button-click
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void DisActivateWindowEvent() {
+	protected override void DisActivateWindowEvent() {
 		//play sound button-click
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void ChancheWindowEvent(int number) {
+	protected override void ChancheWindowEvent(int number) {
 		//play sound button-click
 		gameController.PlaySoundByIndex (3);
 	}
 
-	public override void ActivateConsoleWEvent ()
+	protected override void ActivateConsoleWEvent ()
 	{
 		gameController.PauseGameWithDelay (0.2f);
 
@@ -119,7 +132,7 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void DisActivateConsoleWEvent ()
+	protected override void DisActivateConsoleWEvent ()
 	{
 		// if out from menu in game
 		gameController.ContinueGame ();
@@ -128,11 +141,15 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 		gameController.PlaySoundByIndex (2);
 	}
 
-	public override void ChancheConsoleWEvent(int number) {
+	protected override void ChancheConsoleWEvent(int number) {
 
 	}
+	#endregion
 
 	// main part
+	public bool OverMenuUI {
+		get { return overMenuUI; }
+	}
 
 	public void OverUI() {
 		overMenuUI = true;
@@ -166,9 +183,9 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 
 		if (didInit) {
 			if (val == "123456") {
-				gameController.developState = true;
+				gameController.DevelopState = true;
 			} else {
-				gameController.developState = false;
+				gameController.DevelopState = false;
 			}
 
 			SaveOptionsPrefs ();
@@ -186,7 +203,7 @@ public class GameMenuController_TicTacToe : BaseMenuController {
 	public void ChangeMultiThreadVal(bool val) {
 		multiThread = (val ? 1 : 0);
 
-		gameController.useCoroutineMain = val;
+		gameController.UseCoroutineMain = val;
 
 		if (didInit) {
 			//button sound

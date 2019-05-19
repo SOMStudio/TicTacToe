@@ -4,36 +4,25 @@ using System.Collections;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-[Serializable]
-class PlayerData_TicTacToe
-{
-	public string playerName;
-
-	public int score;
-
-	public int countPlayedLevel;
-	public int[] countWinLevel;
-
-	public DateTime firstEnterInGame;
-	public DateTime lastEnterInGame;
-
-	public string language;
-}
-
 public class UserManager_TicTacToe : BaseUserManager {
-
-	public int difGameCount = 3;
+	[Header("Settings TicTacToe")]
+	[SerializeField]
+	private int difGameCount = 3;
 
 	private int countPlayedLevel;
 	private int[] countWinLevel;
 
 	private bool[] tutorialVievList;
 
-	public DateTime firstEnterInGame;
-	public DateTime lastEnterInGame;
+	[SerializeField]
+	private DateTime firstEnterInGame;
+	[SerializeField]
+	private DateTime lastEnterInGame;
 
-	public string language;
+	[SerializeField]
+	private string language = "EN";
 
+	// main logic
 	private void ClearScore() {
 		SetScore (0);
 	}
@@ -48,7 +37,7 @@ public class UserManager_TicTacToe : BaseUserManager {
 		}
 	}
 
-	public virtual void GetDefaultData()
+	public override void GetDefaultData()
 	{
 		base.GetDefaultData ();
 
@@ -215,11 +204,11 @@ public class UserManager_TicTacToe : BaseUserManager {
 
 			SetScore (data.score);
 
-			if (data.countPlayedLevel != null) {
+			if (data != null) {
 				countPlayedLevel = data.countPlayedLevel;
 			}
 
-			if (data.countWinLevel != null) {
+			if (data != null) {
 				countWinLevel = data.countWinLevel;
 			}
 
@@ -240,4 +229,20 @@ public class UserManager_TicTacToe : BaseUserManager {
 			SetCurrentAsLastEnter ();
 		}
 	}
+}
+
+[Serializable]
+class PlayerData_TicTacToe
+{
+	public string playerName;
+
+	public int score;
+
+	public int countPlayedLevel;
+	public int[] countWinLevel;
+
+	public DateTime firstEnterInGame;
+	public DateTime lastEnterInGame;
+
+	public string language;
 }

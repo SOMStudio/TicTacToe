@@ -3,13 +3,25 @@ using System.Collections.Generic;
 
 public class BaseMusicController : MonoBehaviour {
 
-	public List<MusicController> musicList;
+	[SerializeField]
+	protected List<MusicController> musicList;
 
 	[System.NonSerialized]
 	public static BaseMusicController Instance;
 
-	public void Awake()
+	// main event
+	void Awake()
 	{
+		Init ();
+	}
+
+	void Start() {
+		// keep this object alive
+		DontDestroyOnLoad (this.gameObject);
+	}
+
+	// main logic
+	public void Init() {
 		// activate instance
 		if (Instance == null) {
 			Instance = this;
@@ -18,7 +30,7 @@ public class BaseMusicController : MonoBehaviour {
 		}
 	}
 
-	public void UpdateValume() {
+	public void UpdateVolume() {
 		foreach (MusicController item in musicList) {
 			item.UpdateVolume ();
 		}

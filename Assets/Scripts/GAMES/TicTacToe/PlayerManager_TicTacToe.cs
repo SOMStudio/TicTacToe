@@ -11,35 +11,30 @@ public class PlayerManager_TicTacToe : BasePlayerManager {
 		set { DataManager = value; }
 	}
 
-	// override
-	public override void Awake ()
+	// main events
+	void Start () {
+		// keep this object alive
+		DontDestroyOnLoad (this.gameObject);
+	}
+
+	// main logic
+	public override void Init ()
 	{
+		base.Init ();
+
 		// activate instance
 		if (Instance == null) {
 			Instance = this;
+
+			if (!didInit)
+				Init ();
 		} else if (Instance != this) {
 			Destroy (gameObject);
 		}
 	}
 
-	public void Start () {
-		if (!didInit)
-			Init ();
-	}
-
-	public override void Init ()
-	{
-		// keep this object alive
-		DontDestroyOnLoad (this.gameObject);
-
-		// cache ref to our user manager
-		DataManager_TicTacToe= gameObject.GetComponent<UserManager_TicTacToe>();
-
-		if(DataManager_TicTacToe==null)
-			DataManager_TicTacToe= gameObject.AddComponent<UserManager_TicTacToe>();
-
-		// do play init things in this function
-		didInit= true;
+	public bool IsInit() {
+		return didInit;
 	}
 
 	public override void GameFinished ()
