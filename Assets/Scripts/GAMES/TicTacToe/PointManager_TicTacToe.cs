@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class PointManager_TicTacToe : MonoBehaviour {
 	[Header("Settings TicTacToe")]

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class PlayFieldManager_TicTacToe : BaseMenuController {
 	[Header("Settings TicTacToe")]
