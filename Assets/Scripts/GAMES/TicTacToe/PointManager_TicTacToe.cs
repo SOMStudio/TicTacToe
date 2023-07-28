@@ -45,10 +45,6 @@ public class PointManager_TicTacToe : MonoBehaviour
 				imagePanel.color = val;
 			}
 		}
-		else
-		{
-
-		}
 	}
 
 	public Color GetColorPanel()
@@ -73,10 +69,6 @@ public class PointManager_TicTacToe : MonoBehaviour
 		if (textPanel != null)
 		{
 			textPanel.text = stVal;
-		}
-		else
-		{
-
 		}
 	}
 
@@ -109,10 +101,6 @@ public class PointManager_TicTacToe : MonoBehaviour
 		if (textPanel != null)
 		{
 			textPanel.fontStyle = val;
-		}
-		else
-		{
-
 		}
 	}
 
