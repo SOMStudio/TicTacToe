@@ -2,87 +2,97 @@
 using System.Collections.Generic;
 
 [AddComponentMenu("Base/Music Controller")]
+public class BaseMusicController : MonoBehaviour
+{
 
-public class BaseMusicController : MonoBehaviour {
+	[SerializeField] protected List<MusicController> musicList;
 
-	[SerializeField]
-	protected List<MusicController> musicList;
+	[System.NonSerialized] public static BaseMusicController Instance;
 
-	[System.NonSerialized]
-	public static BaseMusicController Instance;
-
-	// main event
-	void Awake()
+	private void Awake()
 	{
-		Init ();
+		Init();
 	}
 
-	void Start() {
-		// keep this object alive
-		DontDestroyOnLoad (this.gameObject);
+	private void Start()
+	{
+		DontDestroyOnLoad(this.gameObject);
 	}
-
-	// main logic
-	public void Init() {
+	
+	public void Init()
+	{
 		// activate instance
-		if (Instance == null) {
+		if (Instance == null)
+		{
 			Instance = this;
-		} else if (Instance != this) {
-			Destroy (gameObject);
+		}
+		else if (Instance != this)
+		{
+			Destroy(gameObject);
 		}
 	}
 
-	public void UpdateVolume() {
-		foreach (MusicController item in musicList) {
-			item.UpdateVolume ();
+	public void UpdateVolume()
+	{
+		foreach (MusicController item in musicList)
+		{
+			item.UpdateVolume();
 		}
 	}
 
-	public void StopMusic(int num) {
-		MusicController temp = musicList [num];
+	public void StopMusic(int num)
+	{
+		MusicController temp = musicList[num];
 
-		if (temp) {
+		if (temp)
+		{
 			temp.loopMusic = false;
-			temp.FadeOut (15f);
+			temp.FadeOut(15f);
 		}
 	}
 
-	public void StopMusicButPlayToEnd(int num) {
-		MusicController temp = musicList [num];
+	public void StopMusicButPlayToEnd(int num)
+	{
+		MusicController temp = musicList[num];
 
-		if (temp) {
+		if (temp)
+		{
 			temp.loopMusic = false;
 		}
 	}
 
-	public void PlayMusic(int num) {
-		MusicController temp = musicList [num];
+	public void PlayMusic(int num)
+	{
+		MusicController temp = musicList[num];
 
-		if (temp) {
+		if (temp)
+		{
 			temp.loopMusic = true;
-			temp.FadeIn (15f);
+			temp.FadeIn(15f);
 		}
 	}
 
-	//predefine
+	public void PlayRememberMusic()
+	{
+		MusicController temp1 = musicList[0];
 
-	public void PlayRememberMusic() {
-		MusicController temp1 = musicList [0];
-
-		if (temp1.IsPlaing () == true) {
-			StopMusic (0);
+		if (temp1.IsPlaying() != true)
+		{
+			StopMusic(0);
 		}
 
-		PlayMusic (1);
+		PlayMusic(1);
 	}
 
-	public void PlayLevelMusic() {
-		MusicController temp1 = musicList [1];
+	public void PlayLevelMusic()
+	{
+		MusicController temp1 = musicList[1];
 
-		if (temp1.IsPlaing () == true) {
-			StopMusic (1);
+		if (temp1.IsPlaying())
+		{
+			StopMusic(1);
 		}
 
-		PlayMusic (0);
+		PlayMusic(0);
 	}
 }

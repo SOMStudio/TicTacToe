@@ -3,134 +3,153 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-public class UserManager_TicTacToe : BaseUserManager {
-	[Header("Settings TicTacToe")]
-	[SerializeField]
+public class UserManager_TicTacToe : BaseUserManager
+{
+	[Header("Settings TicTacToe")] [SerializeField]
 	private int difGameCount = 3;
 
 	private int countPlayedLevel;
 	private int[] countWinLevel;
 
-	private bool[] tutorialVievList;
+	private bool[] tutorialViewList;
 
-	[SerializeField]
-	private DateTime firstEnterInGame;
-	[SerializeField]
-	private DateTime lastEnterInGame;
+	[SerializeField] private DateTime firstEnterInGame;
+	[SerializeField] private DateTime lastEnterInGame;
 
-	[SerializeField]
-	private string language = "EN";
-
-	// main logic
-	private void ClearScore() {
-		SetScore (0);
+	[SerializeField] private string language = "EN";
+	
+	private void ClearScore()
+	{
+		SetScore(0);
 	}
 
-	private void ClearCountPlayedLevel() {
+	private void ClearCountPlayedLevel()
+	{
 		countPlayedLevel = 0;
 	}
 
-	private void ClearCountWinLevel() {
-		for (int i = 0; i < difGameCount; i++) {
-			countWinLevel [i] = 0;
+	private void ClearCountWinLevel()
+	{
+		for (int i = 0; i < difGameCount; i++)
+		{
+			countWinLevel[i] = 0;
 		}
 	}
 
 	public override void GetDefaultData()
 	{
-		base.GetDefaultData ();
+		base.GetDefaultData();
 
-		ClearCountPlayedLevel ();
+		ClearCountPlayedLevel();
 
 		countWinLevel = new int[difGameCount];
-		ClearCountWinLevel ();
+		ClearCountWinLevel();
 
 		language = "EN";
 	}
 
-	//==================
+	public void ClearPlayerProgress()
+	{
+		ClearScore();
 
-	public void ClearPlayerProgress() {
-		ClearScore ();
-
-		ClearCountPlayedLevel ();
-		ClearCountWinLevel ();
+		ClearCountPlayedLevel();
+		ClearCountWinLevel();
 	}
 
-	public int GetPlayedLevelCount() {
+	public int GetPlayedLevelCount()
+	{
 		return countPlayedLevel;
 	}
 
-	public void SetPlayedLevelCount(int count) {
+	public void SetPlayedLevelCount(int count)
+	{
 		countPlayedLevel = count;
 	}
 
-	public void AddPlayedLevel() {
+	public void AddPlayedLevel()
+	{
 		countPlayedLevel += 1;
 	}
 
-	public int GetWinLevelCount(int difGame = -1) {
+	public int GetWinLevelCount(int difGame = -1)
+	{
 		int result = 0;
 
-		for (int i = 0; i < difGameCount; i++) {
-			if (
-				(difGame == i) || (difGame == -1)
-			) {
-				result = result + countWinLevel [i];
+		for (int i = 0; i < difGameCount; i++)
+		{
+			if (difGame == i || difGame == -1)
+			{
+				result += countWinLevel[i];
 			}
 		}
 
 		return result;
 	}
 
-	public void SetWinLevelCount(int difGame, int count) {
+	public void SetWinLevelCount(int difGame, int count)
+	{
 		countWinLevel[difGame] = count;
 	}
 
-	public void AddWinLevel(int difGame) {
+	public void AddWinLevel(int difGame)
+	{
 		countWinLevel[difGame] = countWinLevel[difGame] + 1;
 	}
 
-	private void AddTutorialSize() {
-		bool[] tutorialVievListNew = new bool[tutorialVievList.Length + 1];
+	private void AddTutorialSize()
+	{
+		bool[] tutorialViewListNew = new bool[tutorialViewList.Length + 1];
 
-		for (int i = 0; i < tutorialVievList.Length; i++) {
-			tutorialVievListNew [i] = tutorialVievList [i];
+		for (int i = 0; i < tutorialViewList.Length; i++)
+		{
+			tutorialViewListNew[i] = tutorialViewList[i];
 		}
 
-		tutorialVievList = tutorialVievListNew;
+		tutorialViewList = tutorialViewListNew;
 	}
 
-	public void SetTuorialState(int numPos, bool boVal) {
-		if (numPos < tutorialVievList.Length) {
-			tutorialVievList [numPos] = boVal;
-		} else {
-			AddTutorialSize ();
-			SetTuorialState (numPos, boVal);
+	public void SetTutorialState(int numPos, bool boVal)
+	{
+		if (numPos < tutorialViewList.Length)
+		{
+			tutorialViewList[numPos] = boVal;
+		}
+		else
+		{
+			AddTutorialSize();
+			SetTutorialState(numPos, boVal);
 		}
 	}
 
-	public bool GetTutorialState(int numPos) {
-		if (numPos < tutorialVievList.Length) {
-			return tutorialVievList [numPos];
-		} else {
+	public bool GetTutorialState(int numPos)
+	{
+		if (numPos < tutorialViewList.Length)
+		{
+			return tutorialViewList[numPos];
+		}
+		else
+		{
 			return false;
 		}
 	}
 
-	public void SetCurrentAsFirsEnter() {
+	public void SetCurrentAsFirsEnter()
+	{
 		firstEnterInGame = DateTime.Now;
 	}
 
-	public DateTime GetFirstEnter() {
+	public DateTime GetFirstEnter()
+	{
 		return firstEnterInGame;
 	}
 
-	public void SetCurrentAsLastEnter() {
+	public void SetCurrentAsLastEnter()
+	{
 		lastEnterInGame = DateTime.Now;
 	}
 
-	public DateTime GetLastEnter() {
+	public DateTime GetLastEnter()
+	{
 		return lastEnterInGame;
 	}
 
@@ -143,29 +162,28 @@ public class UserManager_TicTacToe : BaseUserManager {
 	{
 		language = val;
 	}
-
-	//=for save data=====================
+	
 	private FileStream filePlayerData;
 
-	private void OpenPlayerDataFileForWrite() {
+	private void OpenPlayerDataFileForWrite()
+	{
 		filePlayerData = File.Create(Application.persistentDataPath + "/playerinfo.dat");
 	}
 
-	private void OpenPlayerDataFileForRead() {
-		filePlayerData = File.Open (Application.persistentDataPath + "/playerinfo.dat", FileMode.Open);
+	private void OpenPlayerDataFileForRead()
+	{
+		filePlayerData = File.Open(Application.persistentDataPath + "/playerinfo.dat", FileMode.Open);
 	}
 
-	public void ClosePlayerDateFile() {
-		filePlayerData.Close ();
+	public void ClosePlayerDateFile()
+	{
+		filePlayerData.Close();
 	}
-
-	/// <summary>
-	/// save player data in file with cripting, not use for Web-application (we can't write file)
-	/// </summary>
+	
 	public void SavePrivateDataPlayer()
 	{
 		BinaryFormatter bf = new BinaryFormatter();
-		OpenPlayerDataFileForWrite ();
+		OpenPlayerDataFileForWrite();
 
 		PlayerData_TicTacToe data = new PlayerData_TicTacToe();
 		data.playerName = playerName;
@@ -176,10 +194,13 @@ public class UserManager_TicTacToe : BaseUserManager {
 
 		data.countWinLevel = countWinLevel;
 
-		if (data.firstEnterInGame != firstEnterInGame) {
+		if (data.firstEnterInGame != firstEnterInGame)
+		{
 			data.firstEnterInGame = firstEnterInGame;
 		}
-		if (data.lastEnterInGame != lastEnterInGame) {
+
+		if (data.lastEnterInGame != lastEnterInGame)
+		{
 			data.lastEnterInGame = lastEnterInGame;
 		}
 
@@ -188,44 +209,49 @@ public class UserManager_TicTacToe : BaseUserManager {
 		bf.Serialize(filePlayerData, data);
 		ClosePlayerDateFile();
 	}
-
-	/// <summary>
-	/// restore player data from cripting file.
-	/// </summary>
+	
 	public void LoadPrivateDataPlayer()
 	{
-		if (File.Exists (Application.persistentDataPath + "/playerinfo.dat")) {
-			BinaryFormatter bf = new BinaryFormatter ();
-			OpenPlayerDataFileForRead ();
+		if (File.Exists(Application.persistentDataPath + "/playerinfo.dat"))
+		{
+			BinaryFormatter bf = new BinaryFormatter();
+			OpenPlayerDataFileForRead();
 
-			PlayerData_TicTacToe data = (PlayerData_TicTacToe)bf.Deserialize (filePlayerData);
+			PlayerData_TicTacToe data = (PlayerData_TicTacToe)bf.Deserialize(filePlayerData);
 			playerName = data.playerName;
 
-			SetScore (data.score);
+			SetScore(data.score);
 
-			if (data != null) {
+			if (data != null)
+			{
 				countPlayedLevel = data.countPlayedLevel;
 			}
 
-			if (data != null) {
+			if (data != null)
+			{
 				countWinLevel = data.countWinLevel;
 			}
 
-			if (firstEnterInGame != data.firstEnterInGame) {
+			if (firstEnterInGame != data.firstEnterInGame)
+			{
 				firstEnterInGame = data.firstEnterInGame;
 			}
-			if (lastEnterInGame != data.lastEnterInGame) {
+
+			if (lastEnterInGame != data.lastEnterInGame)
+			{
 				lastEnterInGame = data.lastEnterInGame;
 			}
 
 			language = data.language;
 
-			ClosePlayerDateFile ();
-		} else {
-			GetDefaultData ();
+			ClosePlayerDateFile();
+		}
+		else
+		{
+			GetDefaultData();
 
-			SetCurrentAsFirsEnter ();
-			SetCurrentAsLastEnter ();
+			SetCurrentAsFirsEnter();
+			SetCurrentAsLastEnter();
 		}
 	}
 }
