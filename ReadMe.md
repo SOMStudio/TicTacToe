@@ -15,6 +15,6 @@ The project must be written in c #, unity.
 ## Implemented:
 All 
 
-## Unity 5.6.2
+## Unity 2020
 
 ![Tic-Tac-Toe](screenshot.png)
